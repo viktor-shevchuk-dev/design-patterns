@@ -3,14 +3,19 @@ class Logger {
     this.logs = [];
   }
 
-  get count() {
-    return this.logs.length;
+  log(message) {
+    this.logs.push(message);
   }
 
-  log(message) {
-    const timestamp = new Date().toISOString();
-    this.logs.push({ message, timestamp });
-    console.log(`${timestamp} - ${message}`);
+  showLogs() {
+    console.log(this.logs);
+  }
+
+  static getInstance() {
+    if (!this.instance) {
+      this.instance = new Logger();
+    }
+    return this.instance;
   }
 }
 
