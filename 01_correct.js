@@ -1,5 +1,5 @@
 // The solution to the problems with inheritance is not more inheritance!!!
-// When we cannot create a hierarchical solution to share different algorithms. So we need to extract the algorithms.
+// When we cannot create a hierarchical solution to share different algorithms, we need to extract the algorithms.
 
 class Duck {
   #quackStrategy;
