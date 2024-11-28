@@ -6,13 +6,13 @@ class Duck {
   #flyStrategy;
 
   constructor(quackStrategy, flyStrategy) {
-    if (quackStrategy instanceof QuackStrategy) {
+    if (quackStrategy instanceof IQuackStrategy) {
       this.#quackStrategy = quackStrategy;
     } else {
       throw new Error('Invalid quack strategy');
     }
 
-    if (flyStrategy instanceof FlyStrategy) {
+    if (flyStrategy instanceof IFlyStrategy) {
       this.#flyStrategy = flyStrategy;
     } else {
       throw new Error('Invalid fly strategy');
@@ -36,6 +36,44 @@ class WildDuck extends Duck {
     console.log('Displaying a Wild Duck');
   }
 }
+
+class IQuackStrategy {
+  quack() {
+    throw new Error('This method must be overridden');
+  }
+}
+class IFlyStrategy {
+  fly() {
+    throw new Error('This method must be overridden');
+  }
+}
+
+class SimpleQuackStrategy extends IQuackStrategy {
+  quack() {
+    console.log('Simple Quack!');
+  }
+}
+class NoQuackStrategy extends IQuackStrategy {
+  quack() {
+    // Do nothing
+  }
+}
+class SimpleFlyStrategy extends IFlyStrategy {
+  fly() {
+    console.log('Simple Fly!');
+  }
+}
+class NoFlyStrategy extends IFlyStrategy {
+  fly() {
+    // Do nothing
+  }
+}
+class JetFlyStrategy extends IFlyStrategy {
+  fly() {
+    console.log('Engine Supported Flying!');
+  }
+}
+
 class CityDuck extends Duck {
   constructor() {
     super(new SimpleQuackStrategy(), new SimpleFlyStrategy());
@@ -66,41 +104,6 @@ class MountainDuck extends Duck {
   }
   display() {
     console.log('Displaying a Mountain Duck');
-  }
-}
-class QuackStrategy {
-  quack() {
-    throw new Error('This method must be overridden');
-  }
-}
-class FlyStrategy {
-  fly() {
-    throw new Error('This method must be overridden');
-  }
-}
-class SimpleQuackStrategy extends QuackStrategy {
-  quack() {
-    console.log('Simple Quack!');
-  }
-}
-class NoQuackStrategy extends QuackStrategy {
-  quack() {
-    // Do nothing
-  }
-}
-class SimpleFlyStrategy extends FlyStrategy {
-  fly() {
-    console.log('Simple Fly!');
-  }
-}
-class NoFlyStrategy extends FlyStrategy {
-  fly() {
-    // Do nothing
-  }
-}
-class JetFlyStrategy extends FlyStrategy {
-  fly() {
-    console.log('Engine Supported Flying!');
   }
 }
 
