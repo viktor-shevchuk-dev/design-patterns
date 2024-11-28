@@ -1,39 +1,86 @@
-class Client {
-  #strategy;
-
-  constructor(strategy) {
-    this.#strategy = strategy;
+class IObservable {
+  add(_observer) {
+    throw new Error('This method must be overridden');
   }
-
-  setStrategy(strategy) {
-    this.#strategy = strategy;
+  remove(_observer) {
+    throw new Error('This method must be overridden');
   }
-
-  executeStrategy(data) {
-    return this.#strategy.doAlgorithm(data);
+  notify() {
+    throw new Error('This method must be overridden');
+  }
+  setState() {
+    throw new Error('This method must be overridden');
+  }
+  getState() {
+    throw new Error('This method must be overridden');
   }
 }
-
-class Strategy {
-  doAlgorithm(_data) {
+class IObserver {
+  update() {
     throw new Error('This method must be overridden');
   }
 }
 
-class ConcreteStrategyA extends Strategy {
-  doAlgorithm(data) {
-    return data.sort();
+class ConcreteObservable extends IObservable {
+  #state = { value: 0 };
+  #observers = [];
+
+  add(observer) {
+    this.#observers.push(observer);
+  }
+  remove(observer) {
+    const index = this.#observers.indexOf(observer);
+    if (index > -1) {
+      this.#observers.splice(index, 1);
+    }
+  }
+  notify() {
+    this.#observers.forEach((observer) => observer.update());
+  }
+  setState(newState) {
+    this.#state = { ...newState };
+    this.notify();
+  }
+  getState() {
+    return this.#state;
+  }
+}
+class ConcreteObserverA extends IObserver {
+  #observable;
+
+  constructor(observable) {
+    super();
+    this.#observable = observable;
+  }
+  update() {
+    const newValue = this.#observable.getState().value;
+    console.log(
+      `${this.constructor.name}: Reacted to the event. New value is: ${newValue}`
+    );
+  }
+}
+class ConcreteObserverB extends IObserver {
+  #observable;
+
+  constructor(observable) {
+    super();
+    this.#observable = observable;
+  }
+  update() {
+    const newValue = this.#observable.getState().value;
+    console.log(
+      `${this.constructor.name}: Reacted to the event. New value is: ${newValue}`
+    );
   }
 }
 
-class ConcreteStrategyB extends Strategy {
-  doAlgorithm(data) {
-    return data.reverse();
-  }
-}
+const observable = new ConcreteObservable();
 
-const client = new Client(new ConcreteStrategyB());
-console.log(client.executeStrategy(['a', 'b', 'c', 'd', 'e']));
+const observer1 = new ConcreteObserverA(observable);
+const observer2 = new ConcreteObserverB(observable);
 
-client.setStrategy(new ConcreteStrategyA());
-console.log(client.executeStrategy(['a', 'b', 'c', 'd', 'e']));
+observable.add(observer1);
+observable.add(observer2);
+
+observable.setState({ value: 1 });
+observable.setState({ value: 2 });
