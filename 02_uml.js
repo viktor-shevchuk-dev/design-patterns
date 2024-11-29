@@ -1,86 +1,55 @@
-class IObservable {
-  add(_observer) {
-    throw new Error('This method must be overridden');
-  }
-  remove(_observer) {
-    throw new Error('This method must be overridden');
-  }
-  notify() {
-    throw new Error('This method must be overridden');
-  }
-  setState() {
-    throw new Error('This method must be overridden');
-  }
-  getState() {
-    throw new Error('This method must be overridden');
-  }
-}
-class IObserver {
-  update() {
-    throw new Error('This method must be overridden');
-  }
-}
-
-class ConcreteObservable extends IObservable {
-  #state = { value: 0 };
-  #observers = [];
-
-  add(observer) {
-    this.#observers.push(observer);
-  }
-  remove(observer) {
-    const index = this.#observers.indexOf(observer);
-    if (index > -1) {
-      this.#observers.splice(index, 1);
+class Component {
+  constructor() {
+    if (this.constructor === Component) {
+      throw new Error(
+        'Component is an abstract class and cannot be instantiated directly.'
+      );
     }
   }
-  notify() {
-    this.#observers.forEach((observer) => observer.update());
-  }
-  setState(newState) {
-    this.#state = { ...newState };
-    this.notify();
-  }
-  getState() {
-    return this.#state;
-  }
+  method1() {}
+  method2() {}
 }
-class ConcreteObserverA extends IObserver {
-  #observable;
+class ConcreteComponentA extends Component {
+  method1() {
+    return 'ConcreteComponentA';
+  }
+  method2() {}
+}
+class Decorator extends Component {
+  #component;
 
-  constructor(observable) {
+  constructor(component) {
+    if (new.target === Decorator) {
+      throw new Error(
+        'Decorator is an abstract class and cannot be instantiated directly.'
+      );
+    }
+
     super();
-    this.#observable = observable;
+    this.#component = component;
   }
-  update() {
-    const newValue = this.#observable.getState().value;
-    console.log(
-      `${this.constructor.name}: Reacted to the event. New value is: ${newValue}`
-    );
+  method1() {
+    return this.#component.method1();
   }
-}
-class ConcreteObserverB extends IObserver {
-  #observable;
-
-  constructor(observable) {
-    super();
-    this.#observable = observable;
-  }
-  update() {
-    const newValue = this.#observable.getState().value;
-    console.log(
-      `${this.constructor.name}: Reacted to the event. New value is: ${newValue}`
-    );
-  }
+  method2() {}
 }
 
-const observable = new ConcreteObservable();
+class ConcreteDecoratorA extends Decorator {
+  method1() {
+    return `ConcreteDecoratorA(${super.method1()})`;
+  }
+  method2() {}
+}
+class ConcreteDecoratorB extends Decorator {
+  method1() {
+    return `ConcreteDecoratorB(${super.method1()})`;
+  }
+  method2() {}
+}
 
-const observer1 = new ConcreteObserverA(observable);
-const observer2 = new ConcreteObserverB(observable);
+const concreteComponentA = new ConcreteComponentA();
 
-observable.add(observer1);
-observable.add(observer2);
+const ADecoratedComponentA = new ConcreteDecoratorA(concreteComponentA);
+const ABDecoratedComponentA = new ConcreteDecoratorB(ADecoratedComponentA);
 
-observable.setState({ value: 1 });
-observable.setState({ value: 2 });
+console.log(ABDecoratedComponentA.method1());
