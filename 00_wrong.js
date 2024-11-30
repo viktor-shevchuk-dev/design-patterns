@@ -1,84 +1,88 @@
-// Class explosion OR violates the Interface Segregation Principle, which advocates that no client should be forced to depend on methods it does not use:
-
-class Beverage {
-  constructor() {
-    this.milk = false;
-    this.soy = false;
-    this.whippedCream = false;
-    this.chocolate = false;
-    this.shots = 0;
-  }
-
-  getDescription() {
-    let description = this.constructor.name;
-    if (this.shots > 0) description += ` + ${this.shots} shot(s)`;
-    if (this.milk) description += ' + milk';
-    if (this.soy) description += ' + soy';
-    if (this.whippedCream) description += ' + whipped cream';
-    if (this.chocolate) description += ' + chocolate';
-    return description;
-  }
-
-  cost() {
-    throw new Error('Method cost() must be implemented in subclass');
-  }
-
-  setMilk() {
-    this.milk = true;
-  }
-
-  setSoy() {
-    this.soy = true;
-  }
-
-  setWhippedCream() {
-    this.whippedCream = true;
-  }
-
-  setChocolate() {
-    this.chocolate = true;
-  }
-
-  addEspressoShot() {
-    this.shots++;
+class Animal {
+  constructor(name) {
+    this.name = name;
   }
 }
 
-class Coffee extends Beverage {
+class Duck extends Animal {
   constructor() {
-    super();
+    super('Duck');
   }
 
-  cost() {
-    const baseLineCost = 1.99;
-    let totalCost = baseLineCost;
-    totalCost += this.shots * 0.75; // Add cost for extra shots
-    if (this.milk) totalCost += 0.5;
-    if (this.soy) totalCost += 0.5;
-    if (this.whippedCream) totalCost += 0.5;
-    if (this.chocolate) totalCost += 0.5;
-    return totalCost;
+  makeSound() {
+    console.log('Quack Quack!');
   }
 }
 
-class Tea extends Beverage {
+class Dog extends Animal {
   constructor() {
-    super();
+    super('Dog');
   }
 
-  cost() {
-    return 1.5;
+  makeSound() {
+    console.log('Woof Woof!');
   }
 }
 
-const tea = new Tea();
-tea.setWhippedCream(); // Tea does not want to use setWhippedCream method
-console.log(tea);
-console.log(`${tea.getDescription()} cost: $${tea.cost()}`);
+class Cat extends Animal {
+  constructor() {
+    super('Cat');
+  }
 
-const coffee = new Coffee();
-coffee.addEspressoShot();
-coffee.addEspressoShot();
-coffee.setWhippedCream();
-console.log(coffee);
-console.log(`${coffee.getDescription()} cost: $${coffee.cost()}`);
+  makeSound() {
+    console.log('Meow Meow!');
+  }
+}
+
+const forest = [];
+for (let i = 0; i < 3; i++) {
+  let animal = null;
+  const rndNumBtwZeroAndTwo = Math.floor(Math.random() * 3);
+
+  switch (rndNumBtwZeroAndTwo) {
+    case 0:
+      animal = new Duck();
+      break;
+    case 1:
+      animal = new Dog();
+      break;
+    case 2:
+      animal = new Cat();
+      break;
+    default:
+      throw new Error('Unknown animal type');
+  }
+
+  forest.push(animal);
+  animal.makeSound();
+}
+
+const counts = {
+  Duck: 0,
+  Dog: 0,
+  Cat: 0,
+};
+
+for (let i = 0; i < 3; i++) {
+  let animal = null;
+  const keys = Object.keys(counts);
+  const animalType = keys.reduce((a, b) => (counts[a] < counts[b] ? a : b));
+  counts[animalType]++;
+
+  switch (animalType) {
+    case 'Duck':
+      animal = new Duck();
+      break;
+    case 'Dog':
+      animal = new Dog();
+      break;
+    case 'Cat':
+      animal = new Cat();
+      break;
+    default:
+      throw new Error('Unknown animal type');
+  }
+
+  forest.push(animal);
+  animal.makeSound();
+}
