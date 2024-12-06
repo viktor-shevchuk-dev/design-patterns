@@ -1,60 +1,64 @@
-/**
- * The Subject interface declares common operations for both RealSubject and the
- * Proxy. As long as the client works with RealSubject using this interface,
- * you'll be able to pass it a proxy instead of a real subject.
- */
-class ISubject {
-  request() {
-    throw new Error('The interface needs to be implemented.');
-  }
-}
+class Abstraction {
+  implementation = null;
 
-/**
- * The RealSubject contains some core business logic. Usually, RealSubjects are
- * capable of doing some useful work which may also be very slow or sensitive -
- * e.g. correcting input data. A Proxy can solve these issues without any
- * changes to the RealSubject's code.
- */
-class RealSubject extends ISubject {
-  request() {
-    console.log('RealSubject: Handling request.');
-  }
-}
-
-class Proxy extends ISubject {
-  #realSubject = null;
-
-  /**
-   * The Proxy maintains a reference to an object of the RealSubject class. It
-   * can be either lazy-loaded or passed to the Proxy by the client.
-   */
-  constructor(realSubject) {
-    super();
-    this.#realSubject = realSubject;
-  }
-
-  #checkAccess() {
-    // Some real checks should go here.
-    console.log('Proxy: Checking access prior to firing a real request.');
-
-    return true;
-  }
-
-  /**
-   * The most common applications of the Proxy pattern are lazy loading,
-   * caching, controlling the access, logging, etc. A Proxy can perform one of
-   * these things and then, depending on the result, pass the execution to the
-   * same method in a linked RealSubject object.
-   */
-  request() {
-    if (this.#checkAccess()) {
-      this.#realSubject.request();
+  constructor(implementation) {
+    if (this.constructor === Abstraction) {
+      throw new Error('Cannot instantiate abstract class.');
     }
+    this.implementation = implementation;
+  }
+
+  operation() {
+    const result = this.implementation.operationImplementation();
+    return `Abstraction: Base operation with:\n${result}`;
   }
 }
 
-const realSubject = new RealSubject();
-const proxy = new Proxy(realSubject);
-proxy.request();
-// Proxy: Checking access prior to firing a real request.
-// RealSubject: Handling request.
+class ExtendedAbstraction extends Abstraction {
+  operation() {
+    const result = this.implementation.operationImplementation();
+    return `ExtendedAbstraction: Extended operation with:\n${result}`;
+  }
+}
+
+/**
+ * The Implementation defines the interface for all implementation classes. It
+ * doesn't have to match the Abstraction's interface. In fact, the two
+ * interfaces can be entirely different. Typically the Implementation interface
+ * provides only primitive operations, while the Abstraction defines higher-
+ * level operations based on those primitives.
+ */
+
+class IImplementation {
+  operationImplementation() {}
+}
+
+/**
+ * Each Concrete Implementation corresponds to a specific platform and
+ * implements the Implementation interface using that platform's API.
+ */
+
+class ConcreteImplementationA extends IImplementation {
+  operationImplementation() {
+    return "ConcreteImplementationA: Here's the result on the platform A.";
+  }
+}
+
+class ConcreteImplementationB extends IImplementation {
+  operationImplementation() {
+    return "ConcreteImplementationB: Here's the result on the platform B.";
+  }
+}
+
+/**
+ * Except for the initialization phase, where an Abstraction object gets linked
+ * with a specific Implementation object, the client code should only depend on
+ * the Abstraction class. This way the client code can support any abstraction-
+ * implementation combination.
+ */
+
+const implementation = new ConcreteImplementationA();
+const abstraction = new ExtendedAbstraction(implementation);
+console.log(abstraction.operation());
+// ExtendedAbstraction: Extended operation with:
+// ConcreteImplementationA: Here's the result on the platform A.

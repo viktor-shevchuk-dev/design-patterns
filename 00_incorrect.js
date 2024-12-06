@@ -1,24 +1,25 @@
-const bookString = '...';
+// 2x4 = 8 classes in total
 
-class BookParser {
-  constructor(book) {
-    this.book = book;
-    // heavy computation
-    // precomputes the value of below methods
-  }
+class LongFormView {}
+class ShortFormView {}
 
-  numberOfWords() {
-    // invoking the method is cheap because the cost has already been incurred
-  }
+class Artist {}
+class Book {}
+class Album {}
+class Author {}
 
-  complexityOfText() {
-    // invoking the method is cheap because the cost has already been incurred
-  }
-}
+// Artist Views
+class LongFormArtistView extends LongFormView {}
+class ShortFormArtistView extends ShortFormView {}
 
-const bp1 = new BookParser(bookString);
-bp1.complexityOfText();
+// Book Views
+class LongFormBookView extends LongFormView {}
+class ShortFormBookView extends ShortFormView {}
 
-const bp2 = new BookParser(bookString); // useless computation happening
+// Album Views
+class LongFormAlbumView extends LongFormView {}
+class ShortFormAlbumView extends ShortFormView {}
 
-console.log(bp1, bp2);
+// Author Views
+class LongFormAuthorView extends LongFormView {}
+class ShortFormAuthorView extends ShortFormView {}
